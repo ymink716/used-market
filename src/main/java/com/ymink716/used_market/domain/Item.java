@@ -40,6 +40,13 @@ public class Item {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
     @Builder
     public Item(
         String title,
@@ -54,10 +61,13 @@ public class Item {
         this.itemStatus = ItemStatus.SELLING;
     }
 
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
+    public void update(String title, String content, Integer price) {
+        this.title = title;
+        this.content = content;
+        this.price = price;
+    }
 
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+    public void updateStatus(ItemStatus itemStatus) {
+        this.itemStatus = itemStatus;
+    }
 }
