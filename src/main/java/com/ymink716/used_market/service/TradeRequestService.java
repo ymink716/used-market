@@ -71,11 +71,14 @@ public class TradeRequestService {
     ) {
 
         TradeRequest tradeRequest = findTradeRequest(tradeRequestId);
-        validateSeller(tradeRequest.getItem(), email);
+        Item item = tradeRequest.getItem();
+        validateSeller(item, email);
 
         if (status == TradeRequestStatus.ACCEPTED) {
             tradeRequest.accept();
-            tradeRequest.getItem().reserve();
+            item.reserve();
+
+            rejectOtherRequests(item.getId());
         } else if (status == TradeRequestStatus.REJECTED) {
             tradeRequest.reject();
         } else {
@@ -102,5 +105,16 @@ public class TradeRequestService {
 
         return tradeRequestRepository.findById(tradeRequestId)
             .orElseThrow(() -> new TradeRequestNotFoundException("존재하지 않는 거래 요청입니다."));
+    }
+
+    private void rejectOtherRequests(Long itemId) {
+
+        List<TradeRequest> pendingRequests =
+            tradeRequestRepository.findAllByItemIdAndStatus(
+                itemId,
+                TradeRequestStatus.PENDING
+            );
+
+        pendingRequests.forEach(TradeRequest::reject);
     }
 }
