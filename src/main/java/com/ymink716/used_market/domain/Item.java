@@ -70,4 +70,8 @@ public class Item {
     public void updateStatus(ItemStatus itemStatus) {
         this.itemStatus = itemStatus;
     }
+
+    public void reserve() {
+        this.itemStatus = ItemStatus.RESERVED;
+    }
 }
