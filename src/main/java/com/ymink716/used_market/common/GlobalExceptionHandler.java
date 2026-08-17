@@ -115,4 +115,36 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
             ));
     }
+
+    @ExceptionHandler(InvalidTradeRequestException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidTradeRequest(
+        InvalidTradeRequestException e,
+        HttpServletRequest request
+    ) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        return ResponseEntity
+            .status(status)
+            .body(new ErrorResponse(
+                status,
+                e.getMessage(),
+                request.getRequestURI()
+            ));
+    }
+
+    @ExceptionHandler(DuplicateTradeRequestException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateTradeRequest(
+        DuplicateTradeRequestException e,
+        HttpServletRequest request
+    ) {
+        HttpStatus status = HttpStatus.CONFLICT;
+
+        return ResponseEntity
+            .status(status)
+            .body(new ErrorResponse(
+                status,
+                e.getMessage(),
+                request.getRequestURI()
+            ));
+    }
 }
