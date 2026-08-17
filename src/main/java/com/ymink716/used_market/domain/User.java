@@ -31,6 +31,9 @@ public class User implements UserDetails {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false, unique = true, length = 16)
+    private String nickname;
+
     @Column(name = "password")
     private String password;
 
@@ -42,9 +45,10 @@ public class User implements UserDetails {
     private LocalDateTime updatedAt;
 
     @Builder
-    public User(String email, String password) {
+    public User(String email, String password, String nickname) {
         this.email = email;
         this.password = password;
+        this.nickname = nickname;
     }
 
     @Override

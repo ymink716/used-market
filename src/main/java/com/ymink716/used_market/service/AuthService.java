@@ -1,5 +1,7 @@
 package com.ymink716.used_market.service;
 
+import com.ymink716.used_market.common.exception.InvalidPasswordException;
+import com.ymink716.used_market.common.exception.UserNotFoundException;
 import com.ymink716.used_market.config.jwt.TokenProvider;
 import com.ymink716.used_market.domain.RefreshToken;
 import com.ymink716.used_market.domain.User;
@@ -27,13 +29,10 @@ public class AuthService {
     public LoginResponse login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+            .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
 
-        if (!passwordEncoder.matches(
-            request.getPassword(),
-            user.getPassword()
-        )) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
 
         String accessToken =
@@ -50,10 +49,7 @@ public class AuthService {
 
         saveRefreshToken(user.getId(), refreshToken);
 
-        return new LoginResponse(
-            accessToken,
-            refreshToken
-        );
+        return new LoginResponse(accessToken, refreshToken);
     }
 
     private void saveRefreshToken(Long userId, String refreshToken) {
